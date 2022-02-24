@@ -1,18 +1,16 @@
-Shader "Erogul/Sky Shader"
+Shader "Erogul/Skybox Shader"
 {
     Properties
     {
-        _ColorA("ColorA", Color) = (1,1,1,1)
-        _ColorB("ColorB", Color) = (1,1,1,1)
-        _ColorC("ColorC", Color) = (1,1,1,1)
-        _MainTex("Texture", 2D) = "white" {}
+        _ColorA ("ColorA", Color) = (1, 1, 1, 1)
+        _ColorB ("ColorB", Color) = (1, 1, 1, 1)
+        _ColorC ("ColorC", Color) = (1, 1, 1, 1)
+        _MainTex ("Texture", 2D) = "white" {}
     }
-        SubShader
+    SubShader
     {
-        Tags { "RenderType" = "Opaque" }
+        Tags { "RenderType"="Opaque" }
         LOD 100
-
-        Cull front
 
         Pass
         {
@@ -32,9 +30,9 @@ Shader "Erogul/Sky Shader"
 
             struct v2f
             {
-                float2 uv : TEXCOORD0; //Texture Coordinate
+                float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION; //Clip Space
+                float4 vertex : SV_POSITION;
             };
 
             sampler2D _MainTex;
@@ -43,7 +41,7 @@ Shader "Erogul/Sky Shader"
             float4 _ColorB;
             float4 _ColorC;
 
-            v2f vert(appdata v)
+            v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -52,20 +50,23 @@ Shader "Erogul/Sky Shader"
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-            // apply fog
-            UNITY_APPLY_FOG(i.fogCoord, col);
+                // apply fog
+                UNITY_APPLY_FOG(i.fogCoord, col);
 
-            float j = 1 - i.uv.y;
-            if (j < 0.5) {
-                return lerp(_ColorA, _ColorB, j * 2);
+                float j = 1 - i.uv.y;
+
+                if(j < 0.5)
+                {
+                    return lerp(_ColorA, _ColorB, j * 2);
+                }
+                
+                return lerp(_ColorB, _ColorC, (j - 0.5) * 2);
             }
-            return lerp(_ColorB, _ColorC, (j - 0.5) * 2);
+            ENDCG
         }
-        ENDCG
-    }
     }
 }

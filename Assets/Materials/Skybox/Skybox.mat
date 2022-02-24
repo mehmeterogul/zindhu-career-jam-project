@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: a748c8ea14f49814883a3f62fbb7c3ea, type: 3}
+  m_Shader: {fileID: 4800000, guid: 54078a3a5c4720943bfd54f1f97a47fa, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -41,8 +41,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1.5}
-        m_Offset: {x: 0, y: -0.15}
+        m_Scale: {x: 1, y: 3.03}
+        m_Offset: {x: 0, y: 0.61}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

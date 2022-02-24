@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[SerializeField] Transform player;
+	[SerializeField] Vector3 offset;
+	[SerializeField] float smoothSpeed = 10f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	// Update is called once per frame
+	void LateUpdate()
+	{
+		Vector3 desiredPosition = player.position + offset;
+		Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+		transform.position = smoothedPosition;
+	}
 }
