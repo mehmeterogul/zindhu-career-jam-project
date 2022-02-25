@@ -10,6 +10,9 @@ public class GroundMaterialOffsetChanger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mat.mainTextureOffset += new Vector2(0, -offsetValueChangeSpeed * Time.deltaTime);
+        if (mat.mainTextureOffset.y <= -1f)
+            mat.mainTextureOffset = new Vector2(0, 0);
+        else
+            mat.mainTextureOffset += new Vector2(0, -offsetValueChangeSpeed * Time.deltaTime);
     }
 }

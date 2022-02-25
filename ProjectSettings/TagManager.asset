@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Pizza
   - Obstacle
+  - GreenArea
+  - RedArea
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - Ground
   - Player
   - Obstacle
-  - 
-  - 
+  - GreenArea
+  - RedArea
   - 
   - 
   - 
