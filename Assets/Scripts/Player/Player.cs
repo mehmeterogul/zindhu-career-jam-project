@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     private int pizzaCountInStack;
     private int currentPizzaCount;
 
+    [SerializeField] GameObject emptyPizzaBox;
+    [SerializeField] GameObject pizzaSlice;
+
     private void Start()
     {
         pizzaCountInStack = pizzaGameObjectsInStack.Count;
@@ -33,6 +36,8 @@ public class Player : MonoBehaviour
                 currentPizzaCount--;
                 UpdatePizzaStackActiveStatus();
                 Destroy(other.gameObject);
+
+                ThrowPizzaBox();
             }
         }
 
@@ -45,6 +50,21 @@ public class Player : MonoBehaviour
 
             DoOperation(OPR, value);
         }
+    }
+
+    void ThrowPizzaBox()
+    {
+        GameObject temp = Instantiate(emptyPizzaBox, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+
+        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+
+        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
     }
 
     private void OnTriggerExit(Collider other)
@@ -88,5 +108,25 @@ public class Player : MonoBehaviour
             else
                 pizzaGameObjectsInStack[i].SetActive(false);
         }
+    }
+
+    Vector3 ForceVector()
+    {
+        return new Vector3(RandomNumber() * MinusCounter(), RandomNumber(), -RandomNumber());
+    }
+
+    float RandomNumber()
+    {
+        return Random.Range(5, 15);
+    }
+
+    float MinusCounter()
+    {
+        int rand = Random.Range(0, 2);
+
+        if (rand == 0)
+            return 1;
+        else
+            return -1;
     }
 }

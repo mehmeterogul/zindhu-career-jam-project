@@ -417,7 +417,6 @@ GameObject:
   - component: {fileID: 6679264522813777322}
   - component: {fileID: 6679264522813777321}
   - component: {fileID: 6679264522813777320}
-  - component: {fileID: 6679264522813777316}
   m_Layer: 7
   m_Name: GroundWide
   m_TagString: Untagged
@@ -507,17 +506,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &6679264522813777316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6679264522813777327}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e681c8b976228164982026d0af3090fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 2100000, guid: 8824baca2c62f944cb7d017a4785e3ed, type: 2}
-  offsetValueChangeSpeed: 4
