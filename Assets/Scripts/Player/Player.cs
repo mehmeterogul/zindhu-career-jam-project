@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PizzaStackManager : MonoBehaviour
+public class Player : MonoBehaviour
 {
+    [SerializeField] Animator animator;
     [SerializeField] List<GameObject> pizzaGameObjectsInStack;
     private int pizzaCountInStack;
     private int currentPizzaCount;
@@ -44,11 +45,21 @@ public class PizzaStackManager : MonoBehaviour
 
             DoOperation(OPR, value);
         }
+    }
 
-        if(other.gameObject.CompareTag("FinishLine"))
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("FinishLine"))
         {
-            Debug.Log("Bölüm sonu");
+            Invoke("Finish", 0.25f);
         }
+    }
+
+    void Finish()
+    {
+        FindObjectOfType<GameManager>().FinishLevel();
+        FindObjectOfType<PlayerStackPosition>().FinishLevel();
+        animator.SetTrigger("levelFinished");
     }
 
     void DoOperation(OPERATION opr, int value)
