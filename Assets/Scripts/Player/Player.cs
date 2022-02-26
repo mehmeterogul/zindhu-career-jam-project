@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Player : MonoBehaviour
 {
@@ -9,12 +10,32 @@ public class Player : MonoBehaviour
     private int pizzaCountInStack;
     private int currentPizzaCount;
 
+    [Header("Crash Obstacle Prefabs")]
     [SerializeField] GameObject emptyPizzaBox;
     [SerializeField] GameObject pizzaSlice;
+
+    [Header("Engine Audio Source")]
+    [SerializeField] AudioSource engineAudioSource;
+    [SerializeField] AudioClip engineAudio;
+    [SerializeField] AudioClip engineCrashAudio;
+    [SerializeField] AudioClip engineSlowingAudio;
+
+    [Header("Main Audio Source")]
+    [SerializeField] AudioSource mainAudioSource;
+    [SerializeField] AudioClip crashSound;
 
     private void Start()
     {
         pizzaCountInStack = pizzaGameObjectsInStack.Count;
+        mainAudioSource = GetComponent<AudioSource>();
+
+        StartEngine();
+    }
+
+    void StartEngine()
+    {
+        engineAudioSource.clip = engineAudio;
+        engineAudioSource.Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -25,19 +46,21 @@ public class Player : MonoBehaviour
             {
                 currentPizzaCount++;
                 UpdatePizzaStackActiveStatus();
+                StartCoroutine(PizzaAnimation());
                 Destroy(other.gameObject);
             }
         }
 
         if(other.gameObject.CompareTag("Obstacle"))
         {
+            mainAudioSource.PlayOneShot(crashSound, 1f);
+
             if (currentPizzaCount - 1 >= 0)
             {
                 currentPizzaCount--;
                 UpdatePizzaStackActiveStatus();
-                Destroy(other.gameObject);
 
-                ThrowPizzaBox();
+                StartCoroutine(ThrowPizzaBox(other.gameObject));
             }
         }
 
@@ -52,19 +75,27 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ThrowPizzaBox()
+    IEnumerator ThrowPizzaBox(GameObject other)
     {
         GameObject temp = Instantiate(emptyPizzaBox, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
         temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        Destroy(temp, 2f);
 
         temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
         temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        Destroy(temp, 2f);
 
         temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
         temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        Destroy(temp, 2f);
+
+        yield return new WaitForSeconds(0.12f);
+
+        animator.SetTrigger("hit");
+        FindObjectOfType<PlayerStackPosition>().Hit();
     }
 
     private void OnTriggerExit(Collider other)
@@ -80,6 +111,7 @@ public class Player : MonoBehaviour
         FindObjectOfType<GameManager>().FinishLevel();
         FindObjectOfType<PlayerStackPosition>().FinishLevel();
         animator.SetTrigger("levelFinished");
+        engineAudioSource.Stop();
     }
 
     void DoOperation(OPERATION opr, int value)
@@ -97,6 +129,7 @@ public class Player : MonoBehaviour
         if (currentPizzaCount < 0) currentPizzaCount = 0;
 
         UpdatePizzaStackActiveStatus();
+        StartCoroutine(PizzaAnimation());
     }
 
     void UpdatePizzaStackActiveStatus()
@@ -107,6 +140,19 @@ public class Player : MonoBehaviour
                 pizzaGameObjectsInStack[i].SetActive(true);
             else
                 pizzaGameObjectsInStack[i].SetActive(false);
+        }
+    }
+
+    IEnumerator PizzaAnimation()
+    {
+        int temp = currentPizzaCount;
+        if (temp > pizzaCountInStack) temp = pizzaCountInStack;
+
+        for (int i = temp - 1; i >= 0; i--)
+        {
+            pizzaGameObjectsInStack[i].transform.DORewind();
+            pizzaGameObjectsInStack[i].transform.DOPunchScale(new Vector3(0.3f, 0.5f, 0.3f), .25f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
