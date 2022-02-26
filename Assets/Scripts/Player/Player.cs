@@ -18,11 +18,14 @@ public class Player : MonoBehaviour
     [SerializeField] AudioSource engineAudioSource;
     [SerializeField] AudioClip engineAudio;
     [SerializeField] AudioClip engineCrashAudio;
-    [SerializeField] AudioClip engineSlowingAudio;
 
     [Header("Main Audio Source")]
     [SerializeField] AudioSource mainAudioSource;
     [SerializeField] AudioClip crashSound;
+    [SerializeField] AudioClip pickSound;
+    [SerializeField] AudioClip greenAreaSound;
+    [SerializeField] AudioClip redAreaSound;
+    [SerializeField] AudioClip finishLineSound;
 
     private void Start()
     {
@@ -42,7 +45,9 @@ public class Player : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Pizza"))
         {
-            if(currentPizzaCount + 1 < pizzaCountInStack)
+            mainAudioSource.PlayOneShot(pickSound, 1f);
+
+            if (currentPizzaCount + 1 < pizzaCountInStack)
             {
                 currentPizzaCount++;
                 UpdatePizzaStackActiveStatus();
@@ -72,6 +77,11 @@ public class Player : MonoBehaviour
             int value = area.GetOperationValue();
 
             DoOperation(OPR, value);
+
+            AREACOLOR areaColor = area.GetAreaColor();
+
+            if (areaColor == AREACOLOR.GREEN) mainAudioSource.PlayOneShot(greenAreaSound, 1f);
+            else mainAudioSource.PlayOneShot(redAreaSound, 1f);
         }
     }
 
@@ -102,16 +112,32 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.CompareTag("FinishLine"))
         {
+            StartCoroutine(VolumeDown());
             Invoke("Finish", 0.25f);
         }
     }
 
+    IEnumerator VolumeDown()
+    {
+        float totalTime = 1; // fade audio out over 3 seconds
+        float currentTime = 0;
+
+        while (engineAudioSource.volume > 0)
+        {
+            currentTime += Time.deltaTime;
+            engineAudioSource.volume = Mathf.Lerp(0.5f, 0, currentTime / totalTime);
+            yield return null;
+        }
+
+        engineAudioSource.Stop();
+    }
+
     void Finish()
     {
+        mainAudioSource.PlayOneShot(finishLineSound, 1f);
         FindObjectOfType<GameManager>().FinishLevel();
         FindObjectOfType<PlayerStackPosition>().FinishLevel();
         animator.SetTrigger("levelFinished");
-        engineAudioSource.Stop();
     }
 
     void DoOperation(OPERATION opr, int value)

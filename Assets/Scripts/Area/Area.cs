@@ -4,11 +4,13 @@ using UnityEngine;
 using TMPro;
 
 public enum OPERATION { ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION }
+public enum AREACOLOR { GREEN, RED }
 
 public class Area : MonoBehaviour
 {
     [SerializeField] int operationValue;
     [SerializeField] OPERATION operation;
+    [SerializeField] AREACOLOR areaColor;
     [SerializeField] TextMeshProUGUI operationText;
 
     // Start is called before the first frame update
@@ -34,5 +36,10 @@ public class Area : MonoBehaviour
     public OPERATION GetOperation()
     {
         return operation;
+    }
+    
+    public AREACOLOR GetAreaColor()
+    {
+        return areaColor;
     }
 }

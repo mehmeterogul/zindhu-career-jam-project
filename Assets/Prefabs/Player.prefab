@@ -273,10 +273,14 @@ MonoBehaviour:
     type: 3}
   engineAudioSource: {fileID: 826816164}
   engineAudio: {fileID: 8300000, guid: df58e5b97987e83448291d04fb90becb, type: 3}
+  engineStopAudio: {fileID: 8300000, guid: f2c2effd47aa02342acdf226501387e8, type: 3}
   engineCrashAudio: {fileID: 0}
-  engineSlowingAudio: {fileID: 0}
   mainAudioSource: {fileID: 1992515736}
   crashSound: {fileID: 8300000, guid: 58054672cc1771f4fb9784872f9ef993, type: 3}
+  pickSound: {fileID: 8300000, guid: 96a4d413a2c08da449b82d01b338a46a, type: 3}
+  greenAreaSound: {fileID: 8300000, guid: 22375ba7465dc3745a1622b4d02dde9c, type: 3}
+  redAreaSound: {fileID: 8300000, guid: de5c8bf2388c785408091c37e160d86c, type: 3}
+  finishLineSound: {fileID: 8300000, guid: 7eefeca05aedc6b4e88a7315f08c5f8b, type: 3}
 --- !u!82 &1992515736
 AudioSource:
   m_ObjectHideFlags: 0
