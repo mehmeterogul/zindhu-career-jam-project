@@ -7,7 +7,7 @@ public class PlayerStackPosition : MonoBehaviour
     [SerializeField] Transform stackPosition;
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         transform.position = stackPosition.position;
     }

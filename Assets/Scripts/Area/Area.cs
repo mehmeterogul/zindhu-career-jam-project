@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+public enum OPERATION { ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION }
+
 public class Area : MonoBehaviour
 {
-    public enum OPERATION { ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION}
-    [SerializeField] float operationValue;
+    [SerializeField] int operationValue;
     [SerializeField] OPERATION operation;
     [SerializeField] TextMeshProUGUI operationText;
 
@@ -17,7 +18,7 @@ public class Area : MonoBehaviour
         operationText.text = op + operationValue.ToString();
     }
 
-    string GetOperationSign()
+    private string GetOperationSign()
     {
         if (operation == OPERATION.ADDITION) return "+";
         else if (operation == OPERATION.SUBTRACTION) return "-";
@@ -25,13 +26,13 @@ public class Area : MonoBehaviour
         else return "÷";
     }
 
-    public float GetOperationValue()
+    public int GetOperationValue()
     {
         return operationValue;
     }
 
-    public string GetOperation()
+    public OPERATION GetOperation()
     {
-        return operation.ToString();
+        return operation;
     }
 }

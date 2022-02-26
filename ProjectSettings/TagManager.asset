@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - GreenArea
   - RedArea
+  - FinishLine
+  - Area
   layers:
   - Default
   - TransparentFX
@@ -21,8 +23,8 @@ TagManager:
   - Obstacle
   - GreenArea
   - RedArea
-  - 
-  - 
+  - FinishLine
+  - Area
   - 
   - 
   - 
