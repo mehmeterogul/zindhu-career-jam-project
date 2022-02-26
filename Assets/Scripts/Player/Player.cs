@@ -113,7 +113,7 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("FinishLine"))
         {
             StartCoroutine(VolumeDown());
-            Invoke("Finish", 0.25f);
+            Invoke("Finish", 0.5f);
         }
     }
 
@@ -138,6 +138,12 @@ public class Player : MonoBehaviour
         FindObjectOfType<GameManager>().FinishLevel();
         FindObjectOfType<PlayerStackPosition>().FinishLevel();
         animator.SetTrigger("levelFinished");
+        Invoke("InvokeChangeCamera", 0.5f);
+    }
+
+    void InvokeChangeCamera()
+    {
+        FindObjectOfType<ChangeCamera>().FinishLineCamera();
     }
 
     void DoOperation(OPERATION opr, int value)
