@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
     [Header("Engine Audio Source")]
     [SerializeField] AudioSource engineAudioSource;
     [SerializeField] AudioClip engineAudio;
-    [SerializeField] AudioClip engineCrashAudio;
 
     [Header("Main Audio Source")]
     [SerializeField] AudioSource mainAudioSource;
@@ -26,19 +25,37 @@ public class Player : MonoBehaviour
     [SerializeField] AudioClip greenAreaSound;
     [SerializeField] AudioClip redAreaSound;
     [SerializeField] AudioClip finishLineSound;
+    [SerializeField] List<AudioClip> throwPizzaSounds;
+
+    float engineVolume = 0.5f;
 
     private void Start()
     {
         pizzaCountInStack = pizzaGameObjectsInStack.Count;
         mainAudioSource = GetComponent<AudioSource>();
 
-        StartEngine();
+        StartCoroutine(StartEngine());
     }
 
-    void StartEngine()
+    IEnumerator StartEngine()
     {
+        yield return new WaitForSeconds(1f);
+
+        FindObjectOfType<GameManager>().StartLevel();
+
         engineAudioSource.clip = engineAudio;
+        engineAudioSource.volume = 0;
         engineAudioSource.Play();
+
+        float totalTime = 3f; // fade audio in over 3 seconds
+        float currentTime = 0;
+
+        while (engineAudioSource.volume < engineVolume)
+        {
+            currentTime += Time.deltaTime;
+            engineAudioSource.volume = Mathf.Lerp(0, engineVolume, currentTime / totalTime);
+            yield return null;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,13 +64,10 @@ public class Player : MonoBehaviour
         {
             mainAudioSource.PlayOneShot(pickSound, 1f);
 
-            if (currentPizzaCount + 1 < pizzaCountInStack)
-            {
-                currentPizzaCount++;
-                UpdatePizzaStackActiveStatus();
-                StartCoroutine(PizzaAnimation());
-                Destroy(other.gameObject);
-            }
+            currentPizzaCount++;
+            UpdatePizzaStackActiveStatus();
+            StartCoroutine(PizzaAddAnimation());
+            Destroy(other.gameObject);
         }
 
         if(other.gameObject.CompareTag("Obstacle"))
@@ -125,7 +139,7 @@ public class Player : MonoBehaviour
         while (engineAudioSource.volume > 0)
         {
             currentTime += Time.deltaTime;
-            engineAudioSource.volume = Mathf.Lerp(0.5f, 0, currentTime / totalTime);
+            engineAudioSource.volume = Mathf.Lerp(engineVolume, 0, currentTime / totalTime);
             yield return null;
         }
 
@@ -139,6 +153,7 @@ public class Player : MonoBehaviour
         FindObjectOfType<PlayerStackPosition>().FinishLevel();
         animator.SetTrigger("levelFinished");
         Invoke("InvokeChangeCamera", 0.5f);
+        StartCoroutine(PizzaServeAnimation());
     }
 
     void InvokeChangeCamera()
@@ -153,15 +168,15 @@ public class Player : MonoBehaviour
         else if (opr == OPERATION.MULTIPLICATION) currentPizzaCount *= value;
         else
         {
-            if (value == 0) return; Debug.Log(value);
-            float temp = (float)currentPizzaCount / value; Debug.Log(temp);
-            currentPizzaCount = Mathf.RoundToInt(temp); Debug.Log(currentPizzaCount);
+            if (value == 0) return;
+            float temp = (float)currentPizzaCount / value;
+            currentPizzaCount = Mathf.FloorToInt(temp);
         }
 
         if (currentPizzaCount < 0) currentPizzaCount = 0;
 
         UpdatePizzaStackActiveStatus();
-        StartCoroutine(PizzaAnimation());
+        StartCoroutine(PizzaAddAnimation());
     }
 
     void UpdatePizzaStackActiveStatus()
@@ -175,7 +190,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator PizzaAnimation()
+    IEnumerator PizzaAddAnimation()
     {
         int temp = currentPizzaCount;
         if (temp > pizzaCountInStack) temp = pizzaCountInStack;
@@ -186,6 +201,31 @@ public class Player : MonoBehaviour
             pizzaGameObjectsInStack[i].transform.DOPunchScale(new Vector3(0.3f, 0.5f, 0.3f), .25f);
             yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    IEnumerator PizzaServeAnimation()
+    {
+        yield return new WaitForSeconds(1f);
+
+        List<Transform> tablePositions = FindObjectOfType<TablePositions>().GetTablePositions();
+        int counter = 0;
+
+        int temp = currentPizzaCount;
+        if (temp > pizzaCountInStack) temp = pizzaCountInStack;
+
+        for (int i = temp - 1; i >= 0; i--)
+        {
+            mainAudioSource.PlayOneShot(throwPizzaSounds[Random.Range(0, throwPizzaSounds.Count)], 0.7f);
+            pizzaGameObjectsInStack[i].transform.DOJump(tablePositions[counter].position, 2f, 1, 1f);
+            
+            counter++;
+            if (counter >= tablePositions.Count) counter = 0;
+
+            yield return new WaitForSeconds(0.25f);
+        }
+
+        yield return new WaitForSeconds(1f);
+        FindObjectOfType<GameManager>().LoadNextLevel();
     }
 
     Vector3 ForceVector()

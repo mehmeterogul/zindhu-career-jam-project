@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1448450250977869802}
   - component: {fileID: 278132036921442298}
   - component: {fileID: 8572462012901823187}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 8081467774071450946}
   - component: {fileID: 976139155373247668}
   - component: {fileID: 2202697397177160369}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,8 +167,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: x2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 6269043852077624834}
   - component: {fileID: 6269043852077624839}
   - component: {fileID: 6269043852077624836}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: AreaStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,7 +324,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6269043852295289488}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: GreenArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 6269043852335066629}
   - component: {fileID: 6269043852335066630}
   - component: {fileID: 6269043852335066631}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: AreaStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -443,9 +443,9 @@ GameObject:
   - component: {fileID: 6269043853306603479}
   - component: {fileID: 6269043853306603476}
   - component: {fileID: 8198791944545981316}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: GreenArea
-  m_TagString: GreenArea
+  m_TagString: Area
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -540,4 +540,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   operationValue: 2
   operation: 2
+  areaColor: 0
   operationText: {fileID: 2202697397177160369}
