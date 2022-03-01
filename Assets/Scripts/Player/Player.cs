@@ -27,6 +27,9 @@ public class Player : MonoBehaviour
     [SerializeField] AudioClip finishLineSound;
     [SerializeField] List<AudioClip> throwPizzaSounds;
 
+    [SerializeField] LayerMask areaLayers;
+    [SerializeField] ParticleSystem particle;
+
     float engineVolume = 0.5f;
 
     private void Start()
@@ -35,6 +38,11 @@ public class Player : MonoBehaviour
         mainAudioSource = GetComponent<AudioSource>();
 
         StartCoroutine(StartEngine());
+    }
+
+    void Update()
+    {
+        Debug.DrawRay(transform.position, transform.TransformDirection(-Vector3.forward) * 1f, Color.red);
     }
 
     IEnumerator StartEngine()
@@ -82,20 +90,34 @@ public class Player : MonoBehaviour
                 StartCoroutine(ThrowPizzaBox(other.gameObject));
             }
         }
+    }
 
-        if(other.gameObject.CompareTag("Area"))
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Area"))
         {
-            Area area = other.GetComponent<Area>();
-            OPERATION OPR;
-            OPR = area.GetOperation();
-            int value = area.GetOperationValue();
+            RaycastHit hit;
 
-            DoOperation(OPR, value);
+            if (Physics.Raycast(transform.position, transform.TransformDirection(-Vector3.forward), out hit, 1f, areaLayers))
+            {
+                Area area = hit.transform.GetComponent<Area>();
+                OPERATION OPR;
+                OPR = area.GetOperation();
+                int value = area.GetOperationValue();
 
-            AREACOLOR areaColor = area.GetAreaColor();
+                DoOperation(OPR, value);
 
-            if (areaColor == AREACOLOR.GREEN) mainAudioSource.PlayOneShot(greenAreaSound, 1f);
-            else mainAudioSource.PlayOneShot(redAreaSound, 1f);
+                AREACOLOR areaColor = area.GetAreaColor();
+
+                if (areaColor == AREACOLOR.GREEN) mainAudioSource.PlayOneShot(greenAreaSound, 1f);
+                else mainAudioSource.PlayOneShot(redAreaSound, 1f);
+            }
+        }
+
+        if (other.gameObject.CompareTag("FinishLine"))
+        {
+            StartCoroutine(VolumeDown());
+            Invoke("Finish", 0.5f);
         }
     }
 
@@ -122,15 +144,6 @@ public class Player : MonoBehaviour
         FindObjectOfType<PlayerStackPosition>().Hit();
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag("FinishLine"))
-        {
-            StartCoroutine(VolumeDown());
-            Invoke("Finish", 0.5f);
-        }
-    }
-
     IEnumerator VolumeDown()
     {
         float totalTime = 1; // fade audio out over 3 seconds
@@ -151,6 +164,7 @@ public class Player : MonoBehaviour
         mainAudioSource.PlayOneShot(finishLineSound, 1f);
         FindObjectOfType<GameManager>().FinishLevel();
         FindObjectOfType<PlayerStackPosition>().FinishLevel();
+        particle.Stop();
         animator.SetTrigger("levelFinished");
         Invoke("InvokeChangeCamera", 0.5f);
         StartCoroutine(PizzaServeAnimation());
