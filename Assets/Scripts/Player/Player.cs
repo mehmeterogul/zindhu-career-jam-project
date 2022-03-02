@@ -29,20 +29,18 @@ public class Player : MonoBehaviour
 
     [SerializeField] LayerMask areaLayers;
     [SerializeField] ParticleSystem particle;
+    BoxCollider playerCollider;
 
     float engineVolume = 0.5f;
+    bool isAreaActive = false;
 
     private void Start()
     {
         pizzaCountInStack = pizzaGameObjectsInStack.Count;
         mainAudioSource = GetComponent<AudioSource>();
+        playerCollider = GetComponent<BoxCollider>();
 
         StartCoroutine(StartEngine());
-    }
-
-    void Update()
-    {
-        Debug.DrawRay(transform.position, transform.TransformDirection(-Vector3.forward) * 1f, Color.red);
     }
 
     IEnumerator StartEngine()
@@ -66,6 +64,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*
+    void Update()
+    {
+        Vector3 playerXMinPos = new Vector3(transform.position.x - playerCollider.bounds.extents.x, transform.position.y + playerCollider.bounds.extents.y, transform.position.z);
+        Debug.DrawRay(playerXMinPos, Vector3.forward, Color.red);
+
+        Vector3 playerXMaxPos = new Vector3(transform.position.x + playerCollider.bounds.extents.x, transform.position.y + playerCollider.bounds.extents.y, transform.position.z);
+        Debug.DrawRay(playerXMaxPos, Vector3.forward, Color.red);
+    }
+    */
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Pizza"))
@@ -87,19 +96,20 @@ public class Player : MonoBehaviour
                 currentPizzaCount--;
                 UpdatePizzaStackActiveStatus();
 
-                StartCoroutine(ThrowPizzaBox(other.gameObject));
+                StartCoroutine(ThrowPizzaBox());
             }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
         if (other.gameObject.CompareTag("Area"))
         {
+            if (isAreaActive) return;
+
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position, transform.TransformDirection(-Vector3.forward), out hit, 1f, areaLayers))
+            if (Physics.Raycast(transform.position, Vector3.forward, out hit, 1f, areaLayers))
             {
+                Debug.Log("Test");
+                isAreaActive = true;
                 Area area = hit.transform.GetComponent<Area>();
                 OPERATION OPR;
                 OPR = area.GetOperation();
@@ -111,9 +121,19 @@ public class Player : MonoBehaviour
 
                 if (areaColor == AREACOLOR.GREEN) mainAudioSource.PlayOneShot(greenAreaSound, 1f);
                 else mainAudioSource.PlayOneShot(redAreaSound, 1f);
+
+                Invoke("AreaDeactivator", 1f);
             }
         }
+    }
 
+    void AreaDeactivator()
+    {
+        isAreaActive = false;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
         if (other.gameObject.CompareTag("FinishLine"))
         {
             StartCoroutine(VolumeDown());
@@ -121,7 +141,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator ThrowPizzaBox(GameObject other)
+    IEnumerator ThrowPizzaBox()
     {
         GameObject temp = Instantiate(emptyPizzaBox, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);

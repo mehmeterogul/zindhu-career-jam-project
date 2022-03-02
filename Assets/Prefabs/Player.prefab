@@ -283,6 +283,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 7e099f625d41b1d46a231c0580c8fc17, type: 3}
   - {fileID: 8300000, guid: 8f63e08af7ccac345b44acf10b925ff2, type: 3}
   - {fileID: 8300000, guid: f5eef93031b496046abfb66a17326607, type: 3}
+  areaLayers:
+    serializedVersion: 2
+    m_Bits: 8192
+  particle: {fileID: 3824794712331838696}
 --- !u!82 &1992515736
 AudioSource:
   m_ObjectHideFlags: 0
