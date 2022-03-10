@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     BoxCollider playerCollider;
 
     float engineVolume = 0.5f;
-    bool isAreaActive = false;
+    bool isAnyAreaPassed = false;
 
     private void Start()
     {
@@ -96,20 +96,20 @@ public class Player : MonoBehaviour
                 currentPizzaCount--;
                 UpdatePizzaStackActiveStatus();
 
+                if (currentPizzaCount == 0) return;
                 StartCoroutine(ThrowPizzaBox());
             }
         }
 
         if (other.gameObject.CompareTag("Area"))
         {
-            if (isAreaActive) return;
+            if (isAnyAreaPassed) return;
 
             RaycastHit hit;
 
             if (Physics.Raycast(transform.position, Vector3.forward, out hit, 1f, areaLayers))
             {
-                Debug.Log("Test");
-                isAreaActive = true;
+                isAnyAreaPassed = true;
                 Area area = hit.transform.GetComponent<Area>();
                 OPERATION OPR;
                 OPR = area.GetOperation();
@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
 
     void AreaDeactivator()
     {
-        isAreaActive = false;
+        isAnyAreaPassed = false;
     }
 
     private void OnTriggerExit(Collider other)
@@ -143,19 +143,23 @@ public class Player : MonoBehaviour
 
     IEnumerator ThrowPizzaBox()
     {
-        GameObject temp = Instantiate(emptyPizzaBox, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        int tempPizzaCount = currentPizzaCount;
+        if (tempPizzaCount > pizzaGameObjectsInStack.Count)
+            tempPizzaCount = pizzaGameObjectsInStack.Count;
+
+        GameObject temp = Instantiate(emptyPizzaBox, pizzaGameObjectsInStack[tempPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
-        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 3, ForceMode.Impulse);
         Destroy(temp, 2f);
 
-        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[tempPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
-        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 3, ForceMode.Impulse);
         Destroy(temp, 2f);
 
-        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[currentPizzaCount - 1].transform.position, Quaternion.identity);
+        temp = Instantiate(pizzaSlice, pizzaGameObjectsInStack[tempPizzaCount - 1].transform.position, Quaternion.identity);
         temp.GetComponent<Rigidbody>().AddForce(ForceVector(), ForceMode.Impulse);
-        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 5, ForceMode.Impulse);
+        temp.GetComponent<Rigidbody>().AddTorque(ForceVector() * 3, ForceMode.Impulse);
         Destroy(temp, 2f);
 
         yield return new WaitForSeconds(0.12f);
@@ -269,7 +273,7 @@ public class Player : MonoBehaviour
 
     float RandomNumber()
     {
-        return Random.Range(5, 15);
+        return Random.Range(5, 10);
     }
 
     float MinusCounter()
